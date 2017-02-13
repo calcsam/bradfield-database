@@ -17,6 +17,7 @@ const char *FILE_NAMES[] = {
   "cia-crest-files-cia-crest-archive-metadata/14_export.csv",
 };
 
+/*
 #include <string.h>
 
 const int NUM_COLUMNS = 23;
@@ -112,14 +113,6 @@ struct Filesystem {
   }
 }
 
-void get_next(void (*filter)(int)) {
-
-  return filter()
-}
-
-
-
-
 
 
 struct Table {
@@ -140,9 +133,10 @@ struct Column {
    char *last_name;
    float balance;
 };
-
+*/
 void filescan(int j) {
-  FILE *f = fopen(FILE_NAMES[j], "r");
+  printf("here1 \n");
+  FILE *f = fopen("db.csv", "r");
   char currentRow[50][300];
   int column = 0;
   int place_in_string = 0;
@@ -151,27 +145,26 @@ void filescan(int j) {
   size_t len;
   int rows=0;
   int charInLine;
+  int c;
 
-  while ((read = getline((char **)&line, &len, f)) != -1) {
-    rows++;
-    column=0;
-    charInLine=0;
-    //printf(line);
-    //printf("%d\n", rows);
+  printf("here \n");
+  while ((c = fgetc(f)) != EOF) {
+    currentRow[column][place_in_string] = (char)c;
 
-    while(charInLine < len) {
-      while(line[charInLine] != ',' && charInLine < len) {
-        currentRow[column][place_in_string] = line[charInLine];
-        place_in_string+=(place_in_string < 300);
-        charInLine++;
+    if ((column - 1) % 50 == 0) {
+      printf("----");
+      if (strstr(currentRow[9],"SOVIET TROOPS IN ORANIENBURG")) {
+        printf(currentRow[2]);
       }
-      column+=(column<48);
-      charInLine++;
-      place_in_string = 0;
-    }
-
-    if (strstr(currentRow[9],"SOVIET TROOPS IN ORANIENBURG")) {
-      printf(currentRow[2]);
+      memset(&currentRow[0][0], 0, 30*500);
+      place_in_string=0;
+      column=0;
+    } else if ((place_in_string - 1) % 300 == 0) {
+      printf("%s \n", currentRow[column]);
+      place_in_string=0;
+      column++;
+    } else {
+      place_in_string++;
     }
   }
 
@@ -180,9 +173,10 @@ void filescan(int j) {
 
 
 main(int argc, char **argv) {
-  for(int j=0; j<14; j++) {
-    filescan(j);
-  }
+  printf("here2 \n");
+  //for(int j=0; j<14; j++) {
+    filescan(1);
+  //}
 };
 
 const char *COLUMNS = {
